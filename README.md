@@ -4,6 +4,12 @@ This POC intends to show how to find the audit hook and use `ctypes` to pop it (
 
 The idea is inspired by `misc/diligent-auditor` and `misc/IRS` challeneges and their solve scripts from [dicectf-quals-2024 CTF](https://github.com/dicegang/dicectf-quals-2024-challenges/).
 
+## Tested environment
+```
+Python 3.12.1 (main, Feb  3 2024, 17:23:12) [GCC 13.2.1 20230801] on linux
+Python 3.11.7 (main, Jan 29 2024, 16:03:57) [GCC 13.2.1 20230801] on linux
+```
+
 ## Offsets
 ```python
 # Python audit hook -- under interpreter state
@@ -16,6 +22,9 @@ native_offset_312 = -0x11df0
 ```
 
 ## audit hook in Python
+### Concept
+According to the "fixed" offsets between `ctypes.byref(ctypes.py_object(()))` and `audit_hooks` pointer under `PyInterpreterState`, we can cast `audit_hook` to `Py_ListObject` by address and pop it.
+
 ### How to use
 ```bash
 ./build.sh
@@ -43,6 +52,9 @@ test audit hook -- this will not
 ```
 
 ## audit hook in C
+### Concept
+According to the "fixed" offsets between `ctypes.byref(ctypes.py_object(()))` and `audit_hooks` pointer under `PyRuntimeState`, we can directly rewrite the head of audit hooks linkList to `NULL`.
+
 ### How to use
 ```bash
 ./build.sh
@@ -66,5 +78,28 @@ C audit hook triggered!
 test audit hook -- this will trigger hook
 test audit hook -- this will not
 ```
+
+## Use issues/91153 to do arbitrary read/write
+### Concept
+By using <https://github.com/python/cpython/issues/91153>, we can overwrite audit hook without `ctypes`.
+### How to use
+```bash
+./build.sh
+./POC2-issue91153.py
+./POC2-issue91153-native.py
+```
+### Output
+```bash
+> ./POC2-issue91153.py
+audit hook triggered!
+test audit hook -- this will trigger hook
+test audit hook -- this will not
+> ./POC2-issue91153-native.py
+C audit hook triggered!
+test audit hook -- this will trigger hook
+test audit hook -- this will not
+```
+
 ## TODO
-- [ ] Use <https://bugs.python.org/issue43838>/<https://github.com/python/cpython/issues/91153> to smash it without `ctypes`
+- [x] Use <https://github.com/python/cpython/issues/91153> to smash it without `ctypes`
+- [ ] Find a way to get the `audit_hook` address without using `ctypes`
