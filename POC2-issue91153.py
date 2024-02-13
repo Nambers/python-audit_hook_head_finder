@@ -1,4 +1,8 @@
 #!/usr/bin/env python3.12
+
+### POC2-issue91153.py
+### use ctypes to get the addr and smash it with issues/91153
+
 import ctypes, sys, os
 
 sys.addaudithook((lambda x: lambda *_: x("audit hook triggered!"))(print))

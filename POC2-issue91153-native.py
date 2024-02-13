@@ -1,7 +1,7 @@
 #!audit_hook_head_finder
 
-### POC2-native.py
-### only use offset to memset the audit hook set by C api
+### POC2-issue91153-native.py
+### use ctypes to get the addr and smash it with issues/91153
 
 from audit_hook_head_finder import add_audit
 import ctypes, os
