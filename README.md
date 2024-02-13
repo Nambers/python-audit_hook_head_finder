@@ -26,10 +26,10 @@ native_offset_312 = -0x11df0
 ### Output
 ```bash
 > ./POC.py
-PyInterpreterState_addr=0x7ec5df64df90
-PyRuntimeState_addr=0x7ec5df64fe90
-PyInterpreterState.audit_hooks_ptr_addr=0x7ec5def3c930
-PyRuntimeState.audit_hooks_ptr_addr=0x7ec5def3c870
+PyInterpreterState_addr=0x5c50c812fbe8
+PyRuntimeState_addr=0x5c50c811d180
+PyInterpreterState.audit_hooks_ptr_addr=0x5c50c8170fb0
+PyRuntimeState.audit_hooks_ptr_addr=0x5c50c811dd78
 
 audit_hook_ptr_offset=0x41448
 1
@@ -52,10 +52,10 @@ test audit hook -- this will not
 ### Output
 ```bash
 > ./POC-native.py
-PyInterpreterState_addr=0x774b30f19af0
-PyRuntimeState_addr=0x774b30f1bed0
-PyInterpreterState.audit_hooks_ptr_addr=0x774b30f1bf50
-PyRuntimeState.audit_hooks_ptr_addr=0x774b30df8930
+PyInterpreterState_addr=0x5c7801978be8
+PyRuntimeState_addr=0x5c7801966180
+PyInterpreterState.audit_hooks_ptr_addr=0x5c78019b9fb0
+PyRuntimeState.audit_hooks_ptr_addr=0x5c7801966d78
 
 audit_hook_ptr_offset=-0x11df0
 C audit hook triggered!

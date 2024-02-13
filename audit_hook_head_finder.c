@@ -4,33 +4,31 @@
 #include <internal/pycore_interp.h>
 #include <internal/pycore_runtime.h>
 
+#define GET_RUNTIME_ADDR() &_PyRuntime
+#define GET_INTERP_ADDR() _PyRuntime.interpreters.head
+#define GET_INTERP_AUDIT_HOOK_PTR_ADDR() &GET_INTERP_ADDR()->audit_hooks
+#if PY_MINOR_VERSION == 12
+    #define GET_RUNTIME_AUDIT_HOOK_PTR_ADDR() &_PyRuntime.audit_hooks.head
+#elif PY_MINOR_VERSION == 11
+    #define GET_RUNTIME_AUDIT_HOOK_PTR_ADDR() &_PyRuntime.audit_hook_head
+#else
+    #define GET_RUNTIME_AUDIT_HOOK_PTR_ADDR() &_PyRuntime.audit_hook_head
+#endif
 
 static PyObject* get_runtime_addr(PyObject *self, PyObject *args) {
-    return PyLong_FromSize_t((int64_t)&_PyRuntime);
+    return PyLong_FromSize_t((int64_t)GET_RUNTIME_ADDR());
 }
 
 static PyObject* get_interp_addr(PyObject *self, PyObject *args) {
-    _PyRuntimeState *runtime = &_PyRuntime;
-    PyInterpreterState *interp = runtime->interpreters.head;
-    return PyLong_FromSize_t((int64_t)interp);
+    return PyLong_FromSize_t((int64_t)GET_INTERP_ADDR());
 }
 
 static PyObject* get_interp_audit_hook_ptr_addr(PyObject *self, PyObject *args){
-    _PyRuntimeState *runtime = &_PyRuntime;
-    PyInterpreterState *interp = runtime->interpreters.head;
-    return PyLong_FromSize_t((int64_t)&interp->audit_hooks);
+    return PyLong_FromSize_t((int64_t)GET_INTERP_AUDIT_HOOK_PTR_ADDR());
 }
 
 static PyObject* get_runtime_audit_hook_ptr_addr(PyObject *self, PyObject *args){
-    _PyRuntimeState *runtime = &_PyRuntime;
-    #if PY_MINOR_VERSION == 12
-        return PyLong_FromSize_t((int64_t)&runtime->audit_hooks.head);
-    #elif PY_MINOR_VERSION == 11
-        return PyLong_FromSize_t((int64_t)&runtime->audit_hook_head);
-    #else
-        printf("[WARN] PY_MINOR_VERSION=$d is not tested\n", PY_MINOR_VERSION);
-        return PyLong_FromSize_t((int64_t)&runtime->audit_hook_head);
-    #endif
+    return PyLong_FromSize_t((int64_t)GET_RUNTIME_AUDIT_HOOK_PTR_ADDR());
 }
 
 static int audit(const char *event, PyObject *args, void *userData) {
@@ -45,11 +43,12 @@ static PyObject* add_audit(PyObject *self, PyObject *args) {
 }
 
 static PyObject* print_all(PyObject *self, PyObject *args) {
-    printf("PyInterpreterState_addr=%p\n", get_interp_addr(self, args));
-    printf("PyRuntimeState_addr=%p\n", get_runtime_addr(self, args));
-    printf("PyInterpreterState.audit_hooks_ptr_addr=%p\n", get_interp_audit_hook_ptr_addr(self, args));
-    printf("PyRuntimeState.audit_hooks_ptr_addr=%p\n", get_runtime_audit_hook_ptr_addr(self, args));
+    printf("PyInterpreterState_addr=0x%lx\n", (int64_t)GET_INTERP_ADDR());
+    printf("PyRuntimeState_addr=0x%lx\n", (int64_t)GET_RUNTIME_ADDR());
+    printf("PyInterpreterState.audit_hooks_ptr_addr=0x%lx\n", (int64_t)GET_INTERP_AUDIT_HOOK_PTR_ADDR());
+    printf("PyRuntimeState.audit_hooks_ptr_addr=0x%lx\n", (int64_t)GET_RUNTIME_AUDIT_HOOK_PTR_ADDR());
     printf("\n");
+    fflush(stdout);
     Py_RETURN_NONE;
 }
 
@@ -74,6 +73,9 @@ static PyObject* PyInit_Finder(void) {
 
 int main(int argc, char **argv) {
     assert(PY_MAJOR_VERSION == 3);
+    if(PY_MINOR_VERSION != 11 && PY_MINOR_VERSION != 12){
+        printf("[WARN] PY_MINOR_VERSION=%d is not tested\n", PY_MINOR_VERSION);
+    }
 	PyImport_AppendInittab("audit_hook_head_finder", &PyInit_Finder);
     Py_Initialize();
 	return Py_BytesMain(argc, argv);
