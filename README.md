@@ -4,6 +4,9 @@ This POC intends to show how to find the audit hook and use `ctypes` to pop it (
 
 The idea is inspired by `misc/diligent-auditor` and `misc/IRS` challeneges and their solve scripts from [dicectf-quals-2024 CTF](https://github.com/dicegang/dicectf-quals-2024-challenges/).
 
+# Ref
+<https://ur4ndom.dev/posts/2024-02-11-dicectf-quals-diligent-auditor/>
+
 ## Tested environment
 ```
 Python 3.12.1 (main, Feb  3 2024, 17:23:12) [GCC 13.2.1 20230801] on linux
