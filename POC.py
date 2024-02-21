@@ -5,7 +5,7 @@
 ### and show to procession
 
 from audit_hook_head_finder import print_all, get_interp_audit_hook_ptr_addr
-import sys, ctypes, os
+import sys, ctypes
 
 sys.addaudithook((lambda x: lambda *_: x("audit hook triggered!"))(print))
 
@@ -27,8 +27,8 @@ print(len(audit_hook))
 
 # - POC - 
 
-os.system("echo 'test audit hook -- this will trigger hook'")
+ctypes._os.system("echo 'test audit hook -- this will trigger hook'")
 
 audit_hook.pop()
 
-os.system("echo 'test audit hook -- this will not'")
+ctypes._os.system("echo 'test audit hook -- this will not'")
