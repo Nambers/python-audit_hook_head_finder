@@ -66,6 +66,13 @@ test audit hook -- this will not
 
 ## Smash Audit hook without `ctypes`
 [UAF POC](./UAF-issue91153.md)
+### How to use
+```bash
+# or ./build311.sh
+./build.sh
+./POC-no-ctypes.py
+./POC2-no-ctypes.py
+```
 
 ## TODO
 - [x] Use <https://github.com/python/cpython/issues/91153> to smash it without `ctypes`
