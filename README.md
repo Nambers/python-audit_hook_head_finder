@@ -86,6 +86,9 @@ test audit hook -- this will not
 ## Use issues/91153 to do arbitrary read/write
 [UAF POC](./UAF-issue91153/README.md)
 
+## Without `ctypes`
+[NO-CTYPES POC](./NO-CTYPES/README.md)
+
 ## TODO
 - [x] Use <https://github.com/python/cpython/issues/91153> to smash it without `ctypes`
-- [ ] Find a way to get the `audit_hook` address without using `ctypes`
+- [x] Find a way to get the `audit_hook` address without using `ctypes`

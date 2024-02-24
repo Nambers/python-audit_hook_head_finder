@@ -28,7 +28,7 @@ memory = memoryview(view)
 
 memory[<ADDR>] = <HEX>
 ```
-
+OR  
 ```python
 # following arbitery reading/writing exploit code from https://maplebacon.org/2024/02/dicectf2024-irs/
 # wrote and improved by Maple Bacon CTF Team
