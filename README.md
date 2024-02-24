@@ -77,3 +77,4 @@ test audit hook -- this will not
 ## TODO
 - [x] Use <https://github.com/python/cpython/issues/91153> to smash it without `ctypes`
 - [x] Find a way to get the `audit_hook` address without using `ctypes`
+- [ ] Use <https://bugs.python.org/issue43838> to smash it?
