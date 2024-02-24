@@ -1,7 +1,8 @@
 # Use issues/91153 to do arbitrary read/write
 ## Concept
-By using <https://github.com/python/cpython/issues/91153>, we can overwrite audit hook without `ctypes`.
-## Exploits
+By using <https://github.com/python/cpython/issues/91153>(a use-after-free), we can overwrite audit hook without `ctypes`.  
+Then using brute-force/analysis library to find the offset from a function to the audit hook.
+## UAF Exploits
 ```python
 # following arbitery reading/writing exploit code from https://github.com/python/cpython/issues/91153#issuecomment-1132117665
 # by chilaxan
@@ -45,23 +46,4 @@ uaf[23] = UAF()
 # end of arbitery writing exploit code
 
 memory[<ADDR>] = <HEX>
-```
-
-## How to use
-```bash
-./build.sh
-./UAF-issue91153/POC2-issue91153.py
-./UAF-issue91153/POC2-issue91153-native.py
-```
-
-## Output
-```bash
-> ./POC2-issue91153.py
-audit hook triggered!
-test audit hook -- this will trigger hook
-test audit hook -- this will not
-> ./POC2-issue91153-native.py
-C audit hook triggered!
-test audit hook -- this will trigger hook
-test audit hook -- this will not
 ```

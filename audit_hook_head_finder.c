@@ -32,7 +32,7 @@ static PyObject* get_runtime_audit_hook_ptr_addr(PyObject *self, PyObject *args)
 }
 
 static int audit(const char *event, PyObject *args, void *userData) {
-	printf("C audit hook triggered!\n");
+	printf("C audit hook triggered! event=%s\n", event);
     fflush(stdout);
 	return 0;
 }

