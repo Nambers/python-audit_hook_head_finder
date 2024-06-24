@@ -10,19 +10,21 @@ IRS writeup from *Maple Bacon*: <https://maplebacon.org/2024/02/dicectf2024-irs/
 
 ## Tested environment
 ```
-Python 3.12.1 (main, Feb  3 2024, 17:23:12) [GCC 13.2.1 20230801] on linux
-Python 3.11.7 (main, Jan 29 2024, 16:03:57) [GCC 13.2.1 20230801] on linux
+Python 3.12.4 (main, Jun  7 2024, 06:33:07) [GCC 14.1.1 20240522] on linux
+Python 3.12.3 (tags/v3.12.3:f6650f9ad7, Jun 24 2024, 16:32:34) [GCC 14.1.1 20240522] on linux
+Python 3.11.9 (main, Jun 23 2024, 04:47:27) [GCC 14.1.1 20240522] on linux
 ```
 
 ## Offsets
 ```python
 # ONLY TESTED ON PYTHON 3.12 and 3.11
 # the offsets are from POC.py
-# offset for audit hook set by python and C
+# offset for audit hook set by Python and C
 if sys.version_info[:2] == (3, 12):
-    PTR_OFFSET = [0x41448, -0x11df0]
+    PTR_OFFSET = [0x41448, -0x11df0] # <= 3.12.3
+    PTR_OFFSET = [0x46920, -0xc948] # 3.12.4
 else:
-    PTR_OFFSET = [0xe00, -0xe388]
+    PTR_OFFSET = [0x4d558, 0x3e3d0] # 3.11
 ```
 
 ## Smash Audit hook using `ctypes`
@@ -69,8 +71,11 @@ test audit hook -- this will not
 ### How to use
 ```bash
 # or ./build311.sh
+# build the helper binary
 ./build.sh
+# brute-force the offsets
 ./POC-no-ctypes.py
+# verify the offsets works
 ./POC2-no-ctypes.py
 ```
 

