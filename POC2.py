@@ -7,8 +7,10 @@ import sys
 # ONLY TESTED ON PYTHON 3.12 and 3.11
 # the offsets are from POC.py
 if sys.version_info[:2] == (3, 12):
-    # PTR_OFFSET = [0x41448, -0x11df0] # <= 3.12.3
-    PTR_OFFSET = [0x41448, -0x11e20] # for python3.12.4
+    if sys.version_info[2] <= 3:
+        PTR_OFFSET = [0x41448, -0x11df0] # <= 3.12.3
+    else:
+        PTR_OFFSET = [0x41448, -0x11e20] # for python3.12.4
 else:
     PTR_OFFSET = [0xe00, -0xe388]
 

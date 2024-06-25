@@ -10,8 +10,10 @@ from audit_hook_head_finder import add_audit
 # the third is the offset to get the audit hook set by python
 # the fourth is the offset to get the audit hook set by C
 if sys.version_info[:2] == (3, 12):
-    # PTR_OFFSET = [24, 48, 0x468f0, -0xc948] # <= 3.12.3
-    PTR_OFFSET = [24, 48, 0x46920, -0xc948] # for python3.12.4
+    if sys.version_info[2] <= 3:
+        PTR_OFFSET = [24, 48, 0x468f0, -0xc948] # <= 3.12.3
+    else:
+        PTR_OFFSET = [24, 48, 0x46920, -0xc948] # for python3.12.4
 else:
     # there are multiple offsets for 3.11? check the result of POC-no-ctypes.py
     PTR_OFFSET = [24, 48, 0x4d558, 0x3e3d0]
