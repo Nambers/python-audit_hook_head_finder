@@ -79,6 +79,8 @@ test audit hook -- this will not
 ```
 
 ## Smash Audit hook without `ctypes`
+> ref: <https://maplebacon.org/2024/02/dicectf2024-irs/>
+
 [UAF POC](./UAF-issue91153.md)
 ### How to use
 ```bash
@@ -89,6 +91,15 @@ test audit hook -- this will not
 ./POC-no-ctypes.py
 # verify the offsets works
 ./POC2-no-ctypes.py
+```
+
+## Smash Audit hook with fake bytearray
+> ref: <https://www.da.vidbuchanan.co.uk/blog/35c3ctf-collection-writeup.html> and <https://github.com/gousaiyang/my-ctf-challenges/tree/master/PyAuCalc>
+
+### How to use
+```bash
+./build.sh
+./POC-fake-bytearray.py
 ```
 
 ## TODO
