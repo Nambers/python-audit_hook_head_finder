@@ -12,6 +12,7 @@ IRS writeup from *Maple Bacon*: <https://maplebacon.org/2024/02/dicectf2024-irs/
 ```
 Python 3.12.4 (main, Jun  7 2024, 06:33:07) [GCC 14.1.1 20240522] on linux
 Python 3.12.3 (tags/v3.12.3:f6650f9ad7, Jun 24 2024, 16:32:34) [GCC 14.1.1 20240522] on linux
+Python 3.12.1 (tags/v3.12.1:2305ca5144, Jun 24 2024, 18:55:02) [GCC 14.1.1 20240522] on linux
 Python 3.11.9 (main, Jun 23 2024, 04:47:27) [GCC 14.1.1 20240522] on linux
 ```
 
@@ -21,9 +22,12 @@ Python 3.11.9 (main, Jun 23 2024, 04:47:27) [GCC 14.1.1 20240522] on linux
 # ONLY TESTED ON PYTHON 3.12 and 3.11
 # the offsets are from POC.py
 if sys.version_info[:2] == (3, 12):
-    # PTR_OFFSET = [0x41448, -0x11df0] # <= 3.12.3
-    PTR_OFFSET = [0x41448, -0x11e20] # for python3.12.4
+    if sys.version_info[2] <= 3:
+        PTR_OFFSET = [0x41448, -0x11df0] # <= 3.12.3
+    else:
+        PTR_OFFSET = [0x41448, -0x11e20] # for python3.12.4
 else:
+    # python 3.11
     PTR_OFFSET = [0xe00, -0xe388]
 ```
 
@@ -33,10 +37,13 @@ else:
 # the offsets are from POC-no-ctypes.py
 # offset for audit hook set by Python and C
 if sys.version_info[:2] == (3, 12):
-    # PTR_OFFSET = [0x468f0, -0xc948] # <= 3.12.3
-    PTR_OFFSET = [0x46920, -0xc948] # 3.12.4
+    if sys.version_info[2] <= 3:
+        PTR_OFFSET = [24, 48, 0x468f0, -0xc948] # <= 3.12.3
+    else:
+        PTR_OFFSET = [24, 48, 0x46920, -0xc948] # for python3.12.4
 else:
-    PTR_OFFSET = [0x4d558, 0x3e3d0] # 3.11
+    # there are multiple offsets for 3.11? check the result of POC-no-ctypes.py
+    PTR_OFFSET = [24, 48, 0x4d558, 0x3e3d0]
 ```
 
 ## Smash Audit hook using `ctypes`
