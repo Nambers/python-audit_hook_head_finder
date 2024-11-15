@@ -101,7 +101,7 @@ test audit hook -- this will not
 ```
 
 ## Smash Audit hook with fake bytearray
-> ref: <https://www.da.vidbuchanan.co.uk/blog/35c3ctf-collection-writeup.html> and <https://github.com/gousaiyang/my-ctf-challenges/tree/master/PyAuCalc>
+> ref: <https://www.da.vidbuchanan.co.uk/blog/35c3ctf-collection-writeup.html> and <https://github.com/gousaiyang/my-ctf-challenges/tree/master/PyAuCalc>  
 > more context: <https://github.com/DavidBuchanan314/unsafe-python>
 
 ### How to use
