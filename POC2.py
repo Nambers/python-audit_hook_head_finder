@@ -11,6 +11,8 @@ if sys.version_info[:2] == (3, 12):
         PTR_OFFSET = [0x41448, -0x11df0] # <= 3.12.3
     else:
         PTR_OFFSET = [0x41448, -0x11e20] # for python3.12.4
+elif sys.version_info[:2] == (3, 13):
+    PTR_OFFSET = [0x2aa0, -0x13030]
 else:
     PTR_OFFSET = [0xe00, -0xe388]
 

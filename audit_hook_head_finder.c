@@ -7,10 +7,8 @@
 #define GET_RUNTIME_ADDR() &_PyRuntime
 #define GET_INTERP_ADDR() _PyRuntime.interpreters.head
 #define GET_INTERP_AUDIT_HOOK_PTR_ADDR() &GET_INTERP_ADDR()->audit_hooks
-#if PY_MINOR_VERSION == 12
+#if PY_MINOR_VERSION >= 12
     #define GET_RUNTIME_AUDIT_HOOK_PTR_ADDR() &_PyRuntime.audit_hooks.head
-#elif PY_MINOR_VERSION == 11
-    #define GET_RUNTIME_AUDIT_HOOK_PTR_ADDR() &_PyRuntime.audit_hook_head
 #else
     #define GET_RUNTIME_AUDIT_HOOK_PTR_ADDR() &_PyRuntime.audit_hook_head
 #endif
@@ -73,7 +71,7 @@ static PyObject* PyInit_Finder(void) {
 
 int main(int argc, char **argv) {
     assert(PY_MAJOR_VERSION == 3);
-    if(PY_MINOR_VERSION != 11 && PY_MINOR_VERSION != 12){
+    if(PY_MINOR_VERSION != 11 && PY_MINOR_VERSION != 12 && PY_MINOR_VERSION != 13){
         printf("[WARN] PY_MINOR_VERSION=%d is not tested\n", PY_MINOR_VERSION);
     }
 	PyImport_AppendInittab("audit_hook_head_finder", &PyInit_Finder);
